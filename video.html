@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Así funciona tu agente de IA para WhatsApp</title>
+<style>
+  :root {
+    --bg: #0b0b12;
+    --bg-card: #14141f;
+    --border: #262636;
+    --purple: #8b5cf6;
+    --purple-light: #a78bfa;
+    --green: #25d366;
+    --text: #f2f2f7;
+    --text-dim: #9a9ab0;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: radial-gradient(1200px 600px at 50% -10%, #1c1330 0%, var(--bg) 60%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+  }
+  .wrap {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+  }
+  h1 {
+    font-size: 22px;
+    line-height: 1.3;
+    margin: 0 0 6px;
+    font-weight: 800;
+  }
+  h1 span { color: var(--purple-light); }
+  p.subtitle {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin: 0 0 20px;
+  }
+  .video-frame {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: #000;
+  }
+  .video-frame iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: 0;
+  }
+  .gate {
+    margin-top: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    text-align: center;
+  }
+  .gate-label {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+  .progress-track {
+    width: 100%;
+    height: 8px;
+    background: #0e0e17;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--purple), var(--purple-light));
+    transition: width 1s linear;
+  }
+  .countdown-text { font-size: 13px; color: var(--text-dim); }
+  a.wa-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--green);
+    color: #05270f;
+    font-weight: 800;
+    font-size: 16px;
+    text-decoration: none;
+    padding: 16px 18px;
+    border-radius: 12px;
+    animation: popIn 0.35s ease;
+  }
+  a.wa-btn.show { display: flex; }
+  @keyframes popIn {
+    from { opacity: 0; transform: translateY(6px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .gate.unlocked .countdown-block { display: none; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Listo <span id="nombreDestino">👋</span>, así es como funciona</h1>
+    <p class="subtitle">Dale play al video. En un minuto vas a poder hablar directo con la IA por WhatsApp.</p>
+
+    <div class="video-frame">
+      <iframe src="https://www.loom.com/embed/153b5d557a1645de89083ef8f83cb5cb?autoplay=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
+    <div class="gate" id="gate">
+      <div class="countdown-block">
+        <div class="gate-label" id="gateLabel">Se habilita el botón de WhatsApp en <strong><span id="secondsLeft">60</span>s</strong></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <a class="wa-btn" id="waBtn" target="_blank" rel="noopener">
+        💬 Hablar con la IA por WhatsApp
+      </a>
+    </div>
+  </div>
+
+<script>
+  const WHATSAPP_NUMBER = "525571168642";
+  const WHATSAPP_MESSAGE = "Quiero automatizar el whatsapp de mi negocio";
+
+  const params = new URLSearchParams(window.location.search);
+  const nombre = params.get("nombre");
+  if (nombre) {
+    document.getElementById("nombreDestino").textContent = nombre.split(" ")[0] + " 👋";
+  }
+
+  const waBtn = document.getElementById("waBtn");
+  waBtn.href = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(WHATSAPP_MESSAGE);
+
+  const TOTAL_SECONDS = 60;
+  let elapsed = 0;
+  const secondsLeftEl = document.getElementById("secondsLeft");
+  const progressFill = document.getElementById("progressFill");
+  const gate = document.getElementById("gate");
+  const gateLabel = document.getElementById("gateLabel");
+
+  const timer = setInterval(function () {
+    elapsed += 1;
+    const remaining = Math.max(TOTAL_SECONDS - elapsed, 0);
+    secondsLeftEl.textContent = remaining;
+    progressFill.style.width = Math.min((elapsed / TOTAL_SECONDS) * 100, 100) + "%";
+
+    if (elapsed >= TOTAL_SECONDS) {
+      clearInterval(timer);
+      gate.classList.add("unlocked");
+      waBtn.classList.add("show");
+    }
+  }, 1000);
+</script>
+</body>
+</html>

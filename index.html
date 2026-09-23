@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Automatiza el WhatsApp de tu negocio con IA</title>
+<meta name="description" content="Descubre cómo un agente de IA puede responder y vender por WhatsApp 24/7 en tu negocio." />
+<style>
+  :root {
+    --bg: #0b0b12;
+    --bg-card: #14141f;
+    --border: #262636;
+    --purple: #8b5cf6;
+    --purple-light: #a78bfa;
+    --text: #f2f2f7;
+    --text-dim: #9a9ab0;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: radial-gradient(1200px 600px at 50% -10%, #1c1330 0%, var(--bg) 60%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+  }
+  .wrap {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 48px 20px 60px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(139,92,246,0.12);
+    border: 1px solid rgba(139,92,246,0.35);
+    color: var(--purple-light);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+    width: fit-content;
+  }
+  h1 {
+    font-size: 28px;
+    line-height: 1.25;
+    margin: 0 0 12px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+  h1 span { color: var(--purple-light); }
+  p.subtitle {
+    color: var(--text-dim);
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0 0 28px;
+  }
+  form {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .field { display: flex; flex-direction: column; }
+  input {
+    background: #0e0e17;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 14px;
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input::placeholder { color: #57576b; }
+  input:focus { border-color: var(--purple); }
+  button[type="submit"] {
+    margin-top: 8px;
+    background: linear-gradient(180deg, var(--purple-light), var(--purple));
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 15px 16px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  button[type="submit"]:hover { opacity: 0.92; }
+  button[type="submit"]:active { transform: scale(0.99); }
+  button[type="submit"]:disabled { opacity: 0.6; cursor: not-allowed; }
+  .error {
+    color: #f87171;
+    font-size: 13px;
+    display: none;
+    margin-top: -4px;
+  }
+  .foot-note {
+    text-align: center;
+    color: #57576b;
+    font-size: 12px;
+    margin-top: 18px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="badge">● Agente de IA para WhatsApp</span>
+    <h1>Mira cómo un <span>agente de IA</span> responde y vende por WhatsApp 24/7 en tu negocio</h1>
+    <p class="subtitle">Déjanos tus datos y te mostramos en un video corto exactamente cómo funciona. Al final podrás hablar directo con la IA por WhatsApp.</p>
+
+    <form id="leadForm" autocomplete="off">
+      <div class="field">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required />
+      </div>
+      <div class="field">
+        <label for="correo">Correo</label>
+        <input type="email" id="correo" name="correo" placeholder="tucorreo@ejemplo.com" required />
+      </div>
+      <div class="field">
+        <label for="celular">Celular</label>
+        <input type="tel" id="celular" name="celular" placeholder="10 dígitos" required />
+      </div>
+      <div class="field">
+        <label for="empresa">Nombre de tu empresa</label>
+        <input type="text" id="empresa" name="empresa" placeholder="Nombre de tu negocio" required />
+      </div>
+      <div class="error" id="formError">Por favor completa todos los campos correctamente.</div>
+      <button type="submit" id="submitBtn">Ver cómo funciona →</button>
+    </form>
+
+    <p class="foot-note">Tus datos están seguros. Solo los usamos para mostrarte la demo y contactarte.</p>
+  </div>
+
+<script>
+  // Reemplaza esta URL por la del Google Apps Script Web App (ver instrucciones).
+  const SHEET_ENDPOINT = "__SHEET_ENDPOINT__";
+
+  const form = document.getElementById("leadForm");
+  const errorEl = document.getElementById("formError");
+  const submitBtn = document.getElementById("submitBtn");
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    errorEl.style.display = "none";
+
+    const nombre = document.getElementById("nombre").value.trim();
+    const correo = document.getElementById("correo").value.trim();
+    const celular = document.getElementById("celular").value.trim().replace(/\D/g, "");
+    const empresa = document.getElementById("empresa").value.trim();
+
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+    const phoneOk = celular.length >= 10;
+
+    if (!nombre || !emailOk || !phoneOk || !empresa) {
+      errorEl.style.display = "block";
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Guardando...";
+
+    const payload = { nombre, correo, celular, empresa, origen: document.referrer || "directo", fecha: new Date().toISOString() };
+
+    try {
+      if (SHEET_ENDPOINT && SHEET_ENDPOINT.indexOf("http") === 0) {
+        await fetch(SHEET_ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+        });
+      }
+    } catch (err) {
+      // Seguimos aunque falle el guardado, para no bloquear al lead.
+      console.error("No se pudo guardar en Sheets:", err);
+    }
+
+    const params = new URLSearchParams({ nombre, empresa });
+    window.location.href = "video.html?" + params.toString();
+  });
+</script>
+</body>
+</html>
